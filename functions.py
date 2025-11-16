@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def load_data(file_path):
     df = pd.read_csv(file_path, delimiter=";", dtype="str")
@@ -46,3 +48,17 @@ def preprocess_data(df, start_date="17/12/2006", end_date="26/11/2010"):
     # Fill remaining missing values using weekly seasonality
     df_hourly = df_hourly.fillna(df_hourly.shift(freq="168h"))
     return df_hourly
+
+#Function for building sequential inputs
+
+def build_sequences(y,n_lags,h=1):
+    X_seq = np.zeros((len(y)-n_lags,n_lags//h))
+    y_seq = y[(n_lags):]
+    for i in range(len(y_seq)):
+        X_seq[i,:] = y[i:(i+n_lags):h]
+        
+    return X_seq, y_seq
+
+#Function for calculating mean arctangent absolute percentage error
+def mean_arctangent_absolute_percentage_error(y_actual,y_prediction):
+    return np.mean(np.arctan(np.abs((y_actual-y_prediction)/y_actual)))
