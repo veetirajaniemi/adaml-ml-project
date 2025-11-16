@@ -26,7 +26,7 @@ def preprocess_data(df, start_date="17/12/2006", end_date="26/11/2010"):
     # Interpolate missing values for short gaps up to 60 minutes
     numeric_cols = df.select_dtypes(include=["number"]).columns
     df.set_index("datetime",inplace=True)
-    df[numeric_cols] = df[numeric_cols].interpolate(method="time", limit=60)
+    df[numeric_cols] = df[numeric_cols].interpolate(method="time", limit=60*12)
 
     # Resample to hourly data by taking mean of each hour
     df_hourly = df.resample("h").agg({
