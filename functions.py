@@ -65,19 +65,22 @@ def mean_arctangent_absolute_percentage_error(y_actual,y_prediction):
 
 #Train and validation loop functions for pytorch-models.
 
-def trainloop(dataloader,model,loss_fn,optimizer,batch_size):
+def trainloop(dataloader,model,loss_fn,optimizer,batch_size,device):
     size=len(dataloader.dataset)
     trainloss=0
     model.train()
+
     for batch, (X,y) in enumerate(dataloader):
+        h0, c0 = None, None
         #Prediction and loss
+        X = X.to(device)
+        y = y.to(device)
         pred=model(X)
-        loss=loss_fn(pred,y.view(-1,1))
+        loss=loss_fn(pred,y)
         #Backpropagation
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-
         #Loss for each batch
         loss,current=loss.item(),batch*batch_size+len(X)
         #Add to total loss
@@ -85,15 +88,18 @@ def trainloop(dataloader,model,loss_fn,optimizer,batch_size):
     #print(f"Trainingloss: {trainloss/size}")
     return trainloss/size
 
-def validationloop(dataloader,model,loss_fn,min_validloss):
+def validationloop(dataloader,model,loss_fn,min_validloss,device):
     size=len(dataloader.dataset)
     model.eval()
+    
     validloss=0
     with torch.no_grad():
         for batch, (X,y) in enumerate(dataloader):
+            X = X.to(device)
+            y = y.to(device)
             #Prediction and loss
             pred=model(X)
-            loss=loss_fn(pred,y.view(-1,1))
+            loss=loss_fn(pred,y)
             validloss+=loss.item()
         #print(f"Validation loss: {validloss/size}")
 
