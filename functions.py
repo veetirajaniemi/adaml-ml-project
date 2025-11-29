@@ -66,7 +66,7 @@ def mean_arctangent_absolute_percentage_error(y_actual,y_prediction):
 #Train and validation loop functions for pytorch-models.
 
 def trainloop(dataloader,model,loss_fn,optimizer,batch_size,device):
-    size=len(dataloader.dataset)
+    size=len(dataloader)
     trainloss=0
     model.train()
 
@@ -89,7 +89,7 @@ def trainloop(dataloader,model,loss_fn,optimizer,batch_size,device):
     return trainloss/size
 
 def validationloop(dataloader,model,loss_fn,min_validloss,device):
-    size=len(dataloader.dataset)
+    size=len(dataloader)
     model.eval()
     
     validloss=0
